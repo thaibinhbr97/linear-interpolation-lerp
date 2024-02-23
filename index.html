@@ -20,22 +20,40 @@
         myCanvas.width = window.innerWidth;
         myCanvas.height = window.innerHeight;
 
-        const ctx = myCanvas.getContext("2d");
-
         const A = { x: 100, y: 300 };
         const B = { x: 400, y: 100 };
 
-        drawDot(A, "A");
-        drawDot(B, "B");
+        const orange = { r: 230, g: 150, b: 0 };
+        const blue = { r: 0, g: 70, b: 160 };
 
-        const n = 10;
-        for (let i = 0; i <= n - 1; i++) {
-            const t = i / (n - 1);
-            const C = {
-                x: lerp(A.x, B.x, t),
-                y: lerp(A.y, B.y, t)
-            };
-            drawDot(C, "." + i);
+        const ctx = myCanvas.getContext("2d");
+
+        animate();
+
+        function animate() {
+            ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+
+            const sec = new Date().getTime() / 1000;
+            const t = (Math.sin(sec * Math.PI) + 1) / 2;
+
+            const C = vLerp(A, B, t);
+            drawDot(C, "");
+
+            drawDot(A, "A");
+            drawDot(B, "B");
+
+            const { r, g, b } = vLerp(orange, blue, t);
+            myCanvas.style.backgroundColor = `rgb(${r},${g},${b})`;
+
+            requestAnimationFrame(animate);
+        }
+
+        function vLerp(A, B, t) {
+            const res = {};
+            for (let attr in A) {
+                res[attr] = lerp(A[attr], B[attr], t);
+            }
+            return res;
         }
 
         function lerp(a, b, t) {
